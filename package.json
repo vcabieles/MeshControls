@@ -1,0 +1,26 @@
+{
+  "name": "threeevents",
+  "version": "0.0.1",
+  "description": "Events that make it easier to manipulate ThreeJS meshes as well as speed up development.",
+  "main": "ThreeEvents.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vcabieles/ThreeEvents.git"
+  },
+  "keywords": [
+    "EventControls",
+    "Event Controls",
+    "ThreeJS Events",
+    "Mouse Events",
+    "Mesh Events"
+  ],
+  "author": "Victor Cabieles",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vcabieles/ThreeEvents/issues"
+  },
+  "homepage": "https://github.com/vcabieles/ThreeEvents#readme"
+}
