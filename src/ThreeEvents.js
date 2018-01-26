@@ -27,13 +27,13 @@ function threeEvents (camera, domElement) {
     this.camera = camera;
     this.container = (domElement !== undefined) ? domElement : document;
 
-    var _DisplaceFocused = null; // выделенный объект // selected object
-    this.focused = null; // выделенный объект // selected object
-    this.focusedChild = null; // выделенная часть 3D объекта // the selected part of 3D object
-    this.previous = new THREE.Vector3(); // предыдущие координаты выделенного объекта // // previous coordinates of the selected object
-    var _DisplacemouseOvered = null; // наведенный объект // an inverted object
-    this.mouseOvered = null; // наведенный объект  // an inverted object
-    this.mouseOveredChild = null; // наведенная часть 3D объекта // the induced part of the 3D object
+    var _DisplaceFocused = null; // selected object
+    this.focused = null;// selected object
+    this.focusedChild = null; // the selected part of 3D object
+    this.previous = new THREE.Vector3();// previous coordinates of the selected object
+    var _DisplacemouseOvered = null;// an inverted object
+    this.mouseOvered = null;// an inverted object
+    this.mouseOveredChild = null; // the induced part of the 3D object
 
     this.raycaster = new THREE.Raycaster();
 
@@ -400,4 +400,4 @@ function threeEvents (camera, domElement) {
     this.container.addEventListener('mousemove', getMousePos, false);           // Mouaw coordinates
     this.container.addEventListener('mouseup', onContainerMouseUp, false);      // Mouse Is released
 
-};
+}
