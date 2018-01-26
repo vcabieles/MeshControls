@@ -1,7 +1,7 @@
 /** Events that make it easier to manipulate ThreeJS meshes as well as speed up development.
- * @author
+ * @author Victor Cabieles / victorcabieles@gmail.com / github.com/vcabieles
  * Based on script by Vildanov Almaz / alvild@gmail.com / EventsControls.JS
- * R18 version 10.10.2015.
+ * V:0.0.1 1/25/2018
  */
 
 // intersects = raycaster.intersectObjects( objects );
@@ -20,7 +20,7 @@
 THREE.Object3D.userDataParent = null;
 THREE.Mesh.userDataParent = null;
 
-EventsControls = function (camera, domElement) {
+function threeEvents (camera, domElement) {
 
     var _this = this;
 
@@ -52,7 +52,7 @@ EventsControls = function (camera, domElement) {
     this.collidableEntities = [];
     this.collision = function () {
 
-    }
+    };
 
     // CHANGE FROM ORIGINAL LIBRARY !
     this.isRightMouseButtonClicked = false;
@@ -74,14 +74,14 @@ EventsControls = function (camera, domElement) {
             onContainerMouseMove(event);
             if (_mouseMoveFlag) _this.mouseMove(event);
         }
-    }
+    };
 
-    this.dragAndDrop = function (e) { } // this.container.style.cursor = 'move';
-    this.mouseOver = function (e) { } // this.container.style.cursor = 'pointer';
-    this.mouseOut = function (e) { } // this.container.style.cursor = 'auto';
-    this.mouseUp = function (e) { } // this.container.style.cursor = 'auto';
-    this.mouseMove = function (e) { }
-    this.onclick = function (e) { }
+    this.dragAndDrop = function (e) { }; // this.container.style.cursor = 'move';
+    this.mouseOver = function (e) { };// this.container.style.cursor = 'pointer';
+    this.mouseOut = function (e) { };// this.container.style.cursor = 'auto';
+    this.mouseUp = function (e) { }; // this.container.style.cursor = 'auto';
+    this.mouseMove = function (e) { };
+    this.onclick = function (e) { };
 
     this.attach = function (object) {
 
@@ -97,14 +97,25 @@ EventsControls = function (camera, domElement) {
             }
         }
 
-    }
+    };
 
     this.detach = function (object) {
-
         var item = _this.objects.indexOf(object);
         this.objects.splice(item, 1);
 
-    }
+    };
+
+    this.dispose = function (object){
+        _this.detach(object);
+    };
+
+    this.disposeAll = function (){
+        _this.objects.length = 0;
+    };
+
+    this.getAttachedObjects = function (){
+        return _this.objects;
+    };
 
     var _mouseOverFlag = false;
     var _mouseOutFlag = false;
@@ -125,7 +136,7 @@ EventsControls = function (camera, domElement) {
                 break;
         }
 
-    }
+    };
 
     this.detachEvent = function (event) {
 
@@ -139,7 +150,7 @@ EventsControls = function (camera, domElement) {
                 break;
         }
 
-    }
+    };
 
     this.setFocus = function (object) {
 
@@ -156,7 +167,7 @@ EventsControls = function (camera, domElement) {
             this.previous.copy(this.focused.position);
         }
 
-    }
+    };
 
     this.removeFocus = function () {
 
@@ -165,7 +176,7 @@ EventsControls = function (camera, domElement) {
         this.focusedChild = null;
         this.event = null;
 
-    }
+    };
 
     this.select = function (object) {
 
@@ -179,7 +190,7 @@ EventsControls = function (camera, domElement) {
             this.mouseOvered = object; this.mouseOveredChild = null;
         }
 
-    }
+    };
 
     this.deselect = function () {
 
@@ -188,13 +199,13 @@ EventsControls = function (camera, domElement) {
         this.mouseOveredChild = null;
         this.event = null;
 
-    }
+    };
 
     this.returnPrevious = function () {
 
         _this.focused.position.copy(this.previous);
 
-    }
+    };
 
     this._raySet = function () {
 
@@ -214,7 +225,7 @@ EventsControls = function (camera, domElement) {
 
         }
 
-    }
+    };
 
     this.intersectFrom = (origin, direction) => {
         _this._direction.set(direction.x, direction.y, direction.z);
@@ -227,7 +238,7 @@ EventsControls = function (camera, domElement) {
 
         _this.intersectsMap = _DisplaceIntersectsMap;
 
-    }
+    };
 
     function getMousePos(event) {
         if (_this.enabled) {
@@ -325,7 +336,7 @@ EventsControls = function (camera, domElement) {
                 if (_this.intersects.length > 0) {
                     _this.event = _this.intersects[0];
                     if (_this.mouseOvered) {
-                        if (_DisplacemouseOvered != _this.intersects[0].object) {
+                        if (_DisplacemouseOvered !== _this.intersects[0].object) {
                             _this.mouseOut();
                             _this.select(_this.intersects[0].object);
                             _this.mouseOver(event);
