@@ -227,12 +227,12 @@ function threeEvents (camera, domElement) {
 
     };
 
-    this.intersectFrom = (origin, direction) => {
+    this.intersectFrom = function (origin, direction) {
         _this._direction.set(direction.x, direction.y, direction.z);
         _this._vector.set(origin.x, origin.y, origin.z);
         _this.raycaster.set(_this._vector, _this._direction);
         _this.intersects = _this.raycaster.intersectObjects(_this.objects, true);
-    }
+    };
 
     this._setMap = function () {
 
