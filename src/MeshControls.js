@@ -56,6 +56,26 @@ THREE.MeshControls = function (camera, container) {
             _mouse.y = -( ( clientY - rect.top ) / rect.height ) * 2 + 1;
     }
 
+    function setMouseBtn(event){
+        switch (event.button) {
+            case 0: // left
+                flags.btn.isLeftBtn = true;
+                flags.btn.isRightBtn = false;
+                flags.btn.isMiddleBtn = false;
+                break;
+            case 1: // middle
+                flags.btn.isLeftBtn = false;
+                flags.btn.isRightBtn = false;
+                flags.btn.isMiddleBtn = true;
+                break;
+            case 2: // right
+                flags.btn.isLeftBtn = false;
+                flags.btn.isRightBtn = true;
+                flags.btn.isMiddleBtn = false;
+                break;
+        }
+    }
+
     function addListeners(){
         container.addEventListener( 'mousemove', onDocumentMouseMove, false );
         container.addEventListener( 'mousedown', onDocumentMouseDown, false );
@@ -80,34 +100,16 @@ THREE.MeshControls = function (camera, container) {
     function onDocumentMouseMove(event){
         event.preventDefault();
         toThreeCords(event.clientX, event.clientY);
-
-
-
         console.log("mouse move")
     }
 
     function onDocumentMouseDown(event){
+        setMouseBtn(event);
         _this._raySet();
         _selected = _raycaster.intersectObjects(_this.objects, true);
-        switch (event.button) {
-            case 0: // left
-                flags.btn.isLeftBtn = true;
-                flags.btn.isRightBtn = false;
-                flags.btn.isMiddleBtn = false;
-                break;
-            case 1: // middle
-                flags.btn.isLeftBtn = false;
-                flags.btn.isRightBtn = false;
-                flags.btn.isMiddleBtn = true;
-                break;
-            case 2: // right
-                flags.btn.isLeftBtn = false;
-                flags.btn.isRightBtn = true;
-                flags.btn.isMiddleBtn = false;
-                break;
-        }
+
         if(_selected.length > 0){
-            _this.dispatchEvent( { type: 'click', object: _selected[0], btn: flags.btn});
+            _this.dispatchEvent( { type: 'click', object: _selected, btn: flags.btn});
         }
 
 
@@ -116,6 +118,13 @@ THREE.MeshControls = function (camera, container) {
     }
 
     function onDocumentMouseCancel(event){
+        setMouseBtn(event);
+        _this._raySet();
+        var mouseUpSelected = _raycaster.intersectObjects(_this.objects, true);
+
+        if(mouseUpSelected.length > 0){
+            _this.dispatchEvent( { type: 'click', object: mouseUpSelected, btn: flags.btn});
+        }
         console.log("mouse mouse up")
 
     }
