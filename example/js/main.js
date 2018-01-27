@@ -55,17 +55,18 @@
             scene.add(floorPlane);
 
         // #Light
-        var light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
-        light.position.set( 0.5, 1, 0.75 );
-        light.name = "Light";
-        scene.add( light );
+        var pointLight = new THREE.PointLight( 0xffffff, 1, 100 );
+        pointLight.position.set( 10, 15, 15 );
+        pointLight.name = "PointLight";
+        scene.add( pointLight );
+
 
         // #Cubes
             arenaDom.colors.forEach(function(color,index){
             var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.8 );
-            var material = new THREE.MeshBasicMaterial( {color: color, vertexColors: THREE.VertexColors} );
-            material.wireframe = true;
-            material.wireframeLinewidth = 5;
+            var material = new THREE.MeshPhongMaterial( {color: color} );
+            // material.wireframe = true;
+            // material.wireframeLinewidth = 5;
             var cube = new THREE.Mesh( geometry, material );
             cube.position.set(arenaDom.randomPos(),0.40,arenaDom.randomPos());
             cube.name = "Cube :"+color;
