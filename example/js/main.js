@@ -8,21 +8,52 @@
         height: function (){ return this.container.clientHeight}
     };
 
-    init();
-    animate();
+    var loader = new THREE.TextureLoader();
+    loader.crossOrigin = true;
+
+    loader.load(
+        'img/floor.jpg',
+        onTextureLoad,
+        function(xhr) {
+            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        },
+        function(xhr) {
+            console.log('An error happened');
+        }
+    );
+
+    function onTextureLoad(texture){
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set( 8, 8 );
+        arenaDom.floor = texture;
+
+        init();
+        animate();
+    }
 
     function init() {
 
         // #Camera & Scene
-        camera = new THREE.PerspectiveCamera( 70, arenaDom.width() / arenaDom.height(), 0.01, 10 );
-        camera.position.z = 1;
+        camera = new THREE.PerspectiveCamera( 45, arenaDom.width() / arenaDom.height(), 0.01, 3000 );
+        camera.name = "Camera";
+        camera.position.set(0,1,12);
         scene = new THREE.Scene();
+        scene.name = "Scene";
+        scene.add(camera);
 
-        geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
-        material = new THREE.MeshNormalMaterial();
+        // #Floor
+        var floorGeometry = new THREE.PlaneGeometry( 50, 50, 30,30 ),
+            floorMaterial = new THREE.MeshBasicMaterial( { map : arenaDom.floor, side: THREE.DoubleSide } ),
+            floorPlane = new THREE.Mesh( floorGeometry, floorMaterial );
+            floorPlane.name = "Floor";
+            floorPlane.rotateX(Math.PI/2);
+            scene.add(floorPlane);
 
-        mesh = new THREE.Mesh( geometry, material );
-        scene.add( mesh );
+        // #Cubes
+
+
+
 
         renderer = new THREE.WebGLRenderer( { antialias: true, canvas: arenaDom.element } );
         renderer.setSize( arenaDom.width(), arenaDom.height() );
@@ -31,9 +62,6 @@
     function animate() {
 
         requestAnimationFrame( animate );
-
-        mesh.rotation.x += 0.01;
-        mesh.rotation.y += 0.02;
 
         renderer.render( scene, camera );
 
