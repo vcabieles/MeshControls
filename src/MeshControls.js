@@ -24,7 +24,14 @@ THREE.MeshControls = function (camera, container) {
 
 
     var _this = this,
-        flags = {};
+        flags = {
+            btn: {
+                isLeftBtn: false,
+                isRightBtn: false,
+                isMiddleBtn: false
+            }
+
+        };
 
     this._raySet = function () {
         if (_this.camera instanceof THREE.OrthographicCamera) {
@@ -82,8 +89,25 @@ THREE.MeshControls = function (camera, container) {
     function onDocumentMouseDown(event){
         _this._raySet();
         _selected = _raycaster.intersectObjects(_this.objects, true);
+        switch (event.button) {
+            case 0: // left
+                flags.btn.isLeftBtn = true;
+                flags.btn.isRightBtn = false;
+                flags.btn.isMiddleBtn = false;
+                break;
+            case 1: // middle
+                flags.btn.isLeftBtn = false;
+                flags.btn.isRightBtn = false;
+                flags.btn.isMiddleBtn = true;
+                break;
+            case 2: // right
+                flags.btn.isLeftBtn = false;
+                flags.btn.isRightBtn = true;
+                flags.btn.isMiddleBtn = false;
+                break;
+        }
         if(_selected.length > 0){
-            _this.dispatchEvent( { type: 'click', object: _selected[0] } );
+            _this.dispatchEvent( { type: 'click', object: _selected[0], btn: flags.btn});
         }
 
 
