@@ -397,7 +397,10 @@ THREE.MeshControls = function (camera, domElement) {
     }
 
     this.container.addEventListener('mousedown', onContainerMouseDown, false);	// Mouse clicked down
-    this.container.addEventListener('mousemove', getMousePos, false);           // Mouaw coordinates
+    this.container.addEventListener('mousemove', getMousePos, false);           // Get Mouse coordinates
     this.container.addEventListener('mouseup', onContainerMouseUp, false);      // Mouse Is released
+    this.container.addEventListener('mouseleave', onContainerMouseUp, false);      // Mouse Is released
 
-}
+};
+
+THREE.MeshControls.prototype.constructor = THREE.MeshControls;

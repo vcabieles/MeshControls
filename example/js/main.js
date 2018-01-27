@@ -73,6 +73,10 @@
             // console.log("this: ", this);
         });
 
+        // meshControls.attachEvent("dragAndDrop", function(event){
+        //    console.log(this.intersects);
+        //
+        // });
         // #Light
         var pointLight = new THREE.PointLight( 0xffffff, 1, 100 );
             pointLight.position.set( 10, 15, 15 );
