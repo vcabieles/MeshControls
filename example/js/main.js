@@ -5,7 +5,11 @@
         element: document.getElementById("arena"),
         container: document.getElementById("canvasContainer"),
         width: function (){ return this.container.clientWidth},
-        height: function (){ return this.container.clientHeight}
+        height: function (){ return this.container.clientHeight},
+        colors: ["#ba3748","#6d0e36","#8eecbb","#f4ad0e","#b91768"],
+        randomPos: function () {
+            return (Math.random() * (9-(-9)))+(-9)
+        }
     };
 
     var loader = new THREE.TextureLoader();
@@ -35,7 +39,7 @@
     function init() {
 
         // #Camera & Scene
-        camera = new THREE.PerspectiveCamera( 45, arenaDom.width() / arenaDom.height(), 0.01, 3000 );
+        camera = new THREE.PerspectiveCamera( 65, arenaDom.width() / arenaDom.height(), 0.01, 3000 );
         camera.name = "Camera";
         camera.position.set(0,1,12);
         scene = new THREE.Scene();
@@ -50,8 +54,23 @@
             floorPlane.rotateX(Math.PI/2);
             scene.add(floorPlane);
 
-        // #Cubes
+        // #Light
+        var light = new THREE.HemisphereLight( 0xeeeeff, 0x777788, 0.75 );
+        light.position.set( 0.5, 1, 0.75 );
+        light.name = "Light";
+        scene.add( light );
 
+        // #Cubes
+            arenaDom.colors.forEach(function(color,index){
+            var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.8 );
+            var material = new THREE.MeshBasicMaterial( {color: color, vertexColors: THREE.VertexColors} );
+            material.wireframe = true;
+            material.wireframeLinewidth = 5;
+            var cube = new THREE.Mesh( geometry, material );
+            cube.position.set(arenaDom.randomPos(),0.40,arenaDom.randomPos());
+            cube.name = "Cube :"+color;
+            scene.add(cube);
+        });
 
 
 
