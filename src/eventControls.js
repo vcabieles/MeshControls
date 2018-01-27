@@ -11,6 +11,7 @@ THREE.Mesh.userDataParent = null;
 THREE.MeshControls = function (camera, domElement) {
 
     var _this = this;
+    var selected = null;
 
     this.camera = camera;
     if(domElement === undefined || domElement.nodeName === undefined){
@@ -248,6 +249,8 @@ THREE.MeshControls = function (camera, domElement) {
     }
 
     function onContainerMouseDown(event) {
+        _this._raySet();
+        var currentIntersects = _this.raycaster.intersectObjects(_this.objects, true);
 
         switch (event.button) {
             case 0: // left
@@ -267,6 +270,9 @@ THREE.MeshControls = function (camera, domElement) {
 
                 break;
         }
+        if (currentIntersects.length > 0) {
+
+        }
 
 
         if (_this.enabled && (_onclickFlag || _dragAndDropFlag)) {
@@ -275,10 +281,10 @@ THREE.MeshControls = function (camera, domElement) {
             _this._raySet();
             _this.intersects = _this.raycaster.intersectObjects(_this.objects, true);
 
-            if (_this.intersects.length > 0) {
+            if (currentIntersects.length > 0) {
 
-                _this.event = _this.intersects[0];
-                _this.setFocus(_this.intersects[0].object);
+                _this.event = currentIntersects[0];
+                _this.setFocus(currentIntersects[0].object);
 
                 if (_dragAndDropFlag) {
                     _this.intersects = _this.raycaster.intersectObject(_this.map);
