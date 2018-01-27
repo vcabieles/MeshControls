@@ -1,21 +1,9 @@
 /** Events that make it easier to manipulate ThreeJS meshes as well as speed up development.
  * @author Victor Cabieles / victorcabieles@gmail.com / github.com/vcabieles
  * Based on script by Vildanov Almaz / alvild@gmail.com / EventsControls.JS
- * V:0.0.1 1/25/2018
+ * V:0.0.2 1/27/2018
  */
 
-// intersects = raycaster.intersectObjects( objects );
-// =>
-// intersects[ 0 ].object = this.focused
-//     OR
-// intersects[ 0 ].object = this.mouseOvered
-// this.event = intersects[ 0 ];
-// this.event.item - number of the selected object
-// this.event.distance - distance between the origin of the ray and the intersection
-// this.event.point - point of intersection, in world coordinates
-// this.event.face - intersected face
-// this.event.faceIndex - index of the intersected face
-// this.event.indices - indices of vertices comprising the intersected face
 
 THREE.Object3D.userDataParent = null;
 THREE.Mesh.userDataParent = null;
@@ -79,27 +67,25 @@ THREE.MeshControls = function (camera, domElement) {
         }
     };
 
-    this.dragAndDrop = function (e) { }; // this.container.style.cursor = 'move';
-    this.mouseOver = function (e) { };// this.container.style.cursor = 'pointer';
-    this.mouseOut = function (e) { };// this.container.style.cursor = 'auto';
-    this.mouseUp = function (e) { }; // this.container.style.cursor = 'auto';
-    this.mouseMove = function (e) { };
-    this.onclick = function (e) { };
+    this.dragAndDrop = function(){}; // this.container.style.cursor = 'move';
+    this.mouseOver = function(){};// this.container.style.cursor = 'pointer';
+    this.mouseOut = function(){};// this.container.style.cursor = 'auto';
+    this.mouseUp = function(){}; // this.container.style.cursor = 'auto';
+    this.mouseMove = function(){};
+    this.onclick = function(){};
+    this.dragStart = function(){};
 
     this.attach = function (object) {
-
         if (object instanceof THREE.Mesh) {
             this.objects.push(object);
         }
         else {
-
             this.objects.push(object);
 
             for (var i = 0; i < object.children.length; i++) {
                 object.children[i].userDataParent = object;
             }
         }
-
     };
 
     this.detach = function (object) {
@@ -126,6 +112,9 @@ THREE.MeshControls = function (camera, domElement) {
     var _mouseUpFlag = false;
     var _onclickFlag = false;
     var _mouseMoveFlag = false;
+    var _dragStartFlag = false;
+    var _dragEndFlag = false;
+    var _mouseDownFlag = false;
 
     this.attachEvent = function (event, handler) {
 
@@ -136,6 +125,8 @@ THREE.MeshControls = function (camera, domElement) {
             case 'mouseUp': this.mouseUp = handler; _mouseUpFlag = true; break;
             case 'onclick': this.onclick = handler; _onclickFlag = true; break;
             case 'mouseMove': this.mouseMove = handler; _mouseMoveFlag = true; break;
+            case "dragStart": this.dragStart = handler; _dragStartFlag = true; break;
+            case "dragEnd": this.dragStart = handler; _dragEndFlag = true; break;
                 break;
         }
 
@@ -150,6 +141,8 @@ THREE.MeshControls = function (camera, domElement) {
             case 'mouseUp': _mouseUpFlag = false; break;
             case 'onclick': _onclickFlag = false; break;
             case 'mouseMove': _mouseMoveFlag = false; break;
+            case "dragStart": _dragStartFlag = false; break;
+            case "dragEnd": _dragEndFlag = false; break;
                 break;
         }
 
@@ -275,6 +268,7 @@ THREE.MeshControls = function (camera, domElement) {
                 break;
         }
 
+
         if (_this.enabled && (_onclickFlag || _dragAndDropFlag)) {
 
             if (_this.focused) {return; }
@@ -382,6 +376,7 @@ THREE.MeshControls = function (camera, domElement) {
     }
 
     function onContainerMouseUp(event) {
+        _mouseDownFlag = false;
 //        _this._raySet();
 //        _this.intersects = _this.raycaster.intersectObjects(_this.objects, true);
         if (_this.enabled) {
