@@ -1,6 +1,7 @@
 /** Events that make it easier to manipulate ThreeJS meshes as well as speed up development.
  * @author Victor Cabieles / victorcabieles@gmail.com / github.com/vcabieles
  * V:0.0.3 1/27/2018
+ * .attach: options = draggable true by default;
  */
 
 THREE.MeshControls = function (camera, container) {
@@ -30,7 +31,6 @@ THREE.MeshControls = function (camera, container) {
                 isRightBtn: false,
                 isMiddleBtn: false
             }
-
         };
 
     this._raySet = function () {
@@ -100,37 +100,47 @@ THREE.MeshControls = function (camera, container) {
     function onDocumentMouseMove(event){
         event.preventDefault();
         toThreeCords(event.clientX, event.clientY);
-        console.log("mouse move")
+
+        console.log(_selected);
+
     }
 
     function onDocumentMouseDown(event){
         setMouseBtn(event);
         _this._raySet();
-        _selected = _raycaster.intersectObjects(_this.objects, true);
+        var intersects = _raycaster.intersectObjects(_this.objects, true);
 
-        if(_selected.length > 0){
-            _this.dispatchEvent( { type: 'click', object: _selected, btn: flags.btn});
+        if(intersects.length > 0){
+            _selected = intersects[0].object;
+            _this.dispatchEvent( { type: 'click', object: intersects, btn: flags.btn});
         }
-
-
-        console.log("mouse down")
 
     }
 
     function onDocumentMouseCancel(event){
+        event.preventDefault();
+
         setMouseBtn(event);
         _this._raySet();
         var mouseUpSelected = _raycaster.intersectObjects(_this.objects, true);
 
         if(mouseUpSelected.length > 0){
-            _this.dispatchEvent( { type: 'click', object: mouseUpSelected, btn: flags.btn});
+            _this.dispatchEvent( { type: 'mouseup', object: mouseUpSelected, btn: flags.btn});
         }
-        console.log("mouse mouse up")
+
+        if(_selected && _selected.dragable === true){
+            _this.dispatchEvent( { type: 'dragend', object: _selected});
+        }
 
     }
 
     // #API
-    this.attach = function (object){
+    this.attach = function (object, options){
+        if(options === undefined || options.dragable === undefined){
+           options = {};
+           options.dragable = false;
+           object.dragable = false;
+        }
         if (object instanceof THREE.Mesh) {
             this.objects.push(object);
         }

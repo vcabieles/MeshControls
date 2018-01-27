@@ -83,9 +83,13 @@
         //
         // });
         meshControls.addEventListener("click",function(event){
-            var selectedObject = event.object;
+            var selectedObject = event.object[0];
             selectedObject.object.position.y +=0.7;
            console.log(event)
+        });
+
+        meshControls.addEventListener("dragend",function(event){
+            console.log("dragEnd",event)
         });
 
 
