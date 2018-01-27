@@ -54,10 +54,10 @@ function threeEvents (camera, domElement) {
 
     };
 
-    // CHANGE FROM ORIGINAL LIBRARY !
-    this.isRightMouseButtonClicked = false;
-    this.isLeftMouseButtonClicked = false;
-
+    // #Buttons
+    this.isRightBtn = false;
+    this.isLeftBtn = false;
+    this.isMiddleBtn = true;
 
     // API
 
@@ -257,18 +257,19 @@ function threeEvents (camera, domElement) {
 
         switch (event.button) {
             case 0: // left
-                _this.isLeftMouseButtonClicked = true;
-                _this.isRightMouseButtonClicked = false;
+                _this.isLeftBtn = true;
+                _this.isRightBtn = false;
 
                 break;
             case 1: // middle
-                _this.isLeftMouseButtonClicked = false;
-                _this.isRightMouseButtonClicked = false;
+                _this.isLeftBtn = false;
+                _this.isRightBtn = false;
+                _this.isMiddleBtn = true;
 
                 break;
             case 2: // right
-                _this.isLeftMouseButtonClicked = false;
-                _this.isRightMouseButtonClicked = true;
+                _this.isLeftBtn = false;
+                _this.isRightBtn = true;
 
                 break;
         }
