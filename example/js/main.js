@@ -82,6 +82,12 @@
         //    console.log(this.intersects);
         //
         // });
+        meshControls.addEventListener("click",function(event){
+            var selectedObject = event.object;
+            selectedObject.object.position.y +=0.7;
+            target.get
+           console.log(event)
+        });
 
 
         // #Light
