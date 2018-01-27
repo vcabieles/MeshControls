@@ -1,6 +1,6 @@
 // (function () {
     var camera, scene, renderer;
-    var geometry, material, mesh;
+    var meshControls;
     var arenaDom = {
         element: document.getElementById("arena"),
         container: document.getElementById("canvasContainer"),
@@ -38,6 +38,7 @@
 
     function init() {
 
+
         // #Camera & Scene
         camera = new THREE.PerspectiveCamera( 65, arenaDom.width() / arenaDom.height(), 0.01, 3000 );
         camera.name = "Camera";
@@ -45,6 +46,8 @@
         scene = new THREE.Scene();
         scene.name = "Scene";
         scene.add(camera);
+
+
 
         // #Floor
         var floorGeometry = new THREE.PlaneGeometry( 50, 50, 30,30 ),
@@ -54,26 +57,39 @@
             floorPlane.rotateX(Math.PI/2);
             scene.add(floorPlane);
 
+        //#Controls
+        meshControls = new THREE.MeshControls(camera,arenaDom.element);
+        // meshControls.map = floorPlane;
+        // meshControls.offsetUse = true;
+
+        meshControls.attachEvent("onclick", function(event){
+            console.log("event: ", event);
+            console.log("this: ", this.intersects[0]);
+        });
+
+
+        meshControls.attachEvent("mouseMove", function(event){
+            // console.log("event: ", event);
+            // console.log("this: ", this);
+        });
+
         // #Light
         var pointLight = new THREE.PointLight( 0xffffff, 1, 100 );
-        pointLight.position.set( 10, 15, 15 );
-        pointLight.name = "PointLight";
-        scene.add( pointLight );
+            pointLight.position.set( 10, 15, 15 );
+            pointLight.name = "PointLight";
+            scene.add( pointLight );
 
 
         // #Cubes
             arenaDom.colors.forEach(function(color,index){
             var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.8 );
             var material = new THREE.MeshPhongMaterial( {color: color} );
-            // material.wireframe = true;
-            // material.wireframeLinewidth = 5;
             var cube = new THREE.Mesh( geometry, material );
             cube.position.set(arenaDom.randomPos(),0.40,arenaDom.randomPos());
             cube.name = "Cube :"+color;
+            meshControls.attach(cube);
             scene.add(cube);
         });
-
-
 
         renderer = new THREE.WebGLRenderer( { antialias: true, canvas: arenaDom.element } );
         renderer.setSize( arenaDom.width(), arenaDom.height() );

@@ -20,12 +20,16 @@
 THREE.Object3D.userDataParent = null;
 THREE.Mesh.userDataParent = null;
 
-function threeEvents (camera, domElement) {
+THREE.MeshControls = function (camera, domElement) {
 
     var _this = this;
 
     this.camera = camera;
-    this.container = (domElement !== undefined) ? domElement : document;
+    if(domElement === undefined || domElement.nodeName === undefined){
+        throw "THREE.MeshControls Element Parameter Not set"
+    }else{
+        this.container = domElement
+    }
 
     var _DisplaceFocused = null; // selected object
     this.focused = null;// selected object
@@ -60,7 +64,6 @@ function threeEvents (camera, domElement) {
     this.isMiddleBtn = true;
 
     // API
-
     this.enabled = true;
 
     this.objects = [];
@@ -242,11 +245,9 @@ function threeEvents (camera, domElement) {
 
     function getMousePos(event) {
         if (_this.enabled) {
-            var x = event.offsetX === undefined ? event.layerX : event.offsetX;
-            var y = event.offsetY === undefined ? event.layerY : event.offsetY;
-
-            _this._mouse.x = ((x) / (_this.container.width / 2)) * 2 - 1;
-            _this._mouse.y = -((y) /( _this.container.height / 2)) * 2 + 1;
+            var rect = _this.container.getBoundingClientRect();
+            _this._mouse.x =  ( ( event.clientX - rect.left ) / rect.width ) * 2 - 1;
+            _this._mouse.y = - ( ( event.clientY - rect.top ) / rect.height ) * 2 + 1;
 
             onContainerMouseMove(event);
             if (_mouseMoveFlag) _this.mouseMove(event);
@@ -275,7 +276,8 @@ function threeEvents (camera, domElement) {
         }
 
         if (_this.enabled && (_onclickFlag || _dragAndDropFlag)) {
-            if (_this.focused) { return; }
+
+            if (_this.focused) {return; }
             _this._raySet();
             _this.intersects = _this.raycaster.intersectObjects(_this.objects, true);
 
@@ -382,11 +384,8 @@ function threeEvents (camera, domElement) {
     function onContainerMouseUp(event) {
 //        _this._raySet();
 //        _this.intersects = _this.raycaster.intersectObjects(_this.objects, true);
-        console.log("container Mouse UP");
         if (_this.enabled) {
-            console.log("_this.enabled");
             if (_this.focused) {
-                console.log("_this.focused");
                 _this.intersects = _this.raycaster.intersectObjects(_this.objects, true);
                 _this.mouseUp(event);
                 _DisplaceFocused = null;
