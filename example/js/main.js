@@ -58,38 +58,24 @@
             scene.add(floorPlane);
 
         //#Controls
-        meshControls = new THREE.MeshControls(camera,arenaDom.element);
-        // // meshControls.map = floorPlane;
-        // // meshControls.offsetUse = true;
-        //
-        // meshControls.attachEvent("onclick", function(event){
-        //     console.log("event: ", event);
-        //     console.log("this: ", this.intersects[0]);
-        // });
-        //
-        //
-        // meshControls.attachEvent("mouseMove", function(event){
-        //     // console.log("event: ", event);
-        //     // console.log("this: ", this);
-        // });
-        //
-        // // meshControls.attachEvent("dragAndDrop", function(event){
-        // //    console.log(this.intersects);
-        // //
-        // // });
-        //
-        // meshControls.attachEvent("dragStart", function(event){
-        //    console.log(this.intersects);
-        //
-        // });
+        meshControls = new THREE.MeshControls(camera,scene,arenaDom.element);
+
         meshControls.addEventListener("click",function(event){
             var selectedObject = event.object[0];
-            selectedObject.object.position.y +=0.7;
+            // selectedObject.object.position.y +=0.7;
            console.log(event)
         });
 
         meshControls.addEventListener("dragend",function(event){
             console.log("dragEnd",event)
+        });
+
+        meshControls.addEventListener("dragstart",function(event){
+            console.log("dragstart",event)
+        });
+
+        meshControls.addEventListener("drag",function(event){
+            console.log("drag")
         });
 
 

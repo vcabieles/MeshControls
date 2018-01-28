@@ -1,12 +1,15 @@
 /** Events that make it easier to manipulate ThreeJS meshes as well as speed up development.
  * @author Victor Cabieles / victorcabieles@gmail.com / github.com/vcabieles
  * V:0.0.3 1/27/2018
- * .attach: options = draggable true by default;
+ * .attach: options = draggable true by default, draggableBtnOn: left mouse button by default;
+ * _this.map plane is undefined then one is created.
  */
 
-THREE.MeshControls = function (camera, container) {
+THREE.MeshControls = function (camera,scene,container) {
 
-    if(container === undefined || container.nodeName === undefined){
+    if(scene === undefined || scene.nodeName){
+        throw "THREE.MeshControls Scene Parameter Not set"
+    }else if(container === undefined || container.nodeName === undefined){
         throw "THREE.MeshControls Element Parameter Not set"
     }else{
         this.container = container;
@@ -15,6 +18,7 @@ THREE.MeshControls = function (camera, container) {
     }
 
     var _plane = new THREE.Plane(),
+        _3DPlane = generatePlane(),
         _raycaster = new THREE.Raycaster(),
         _mouse = new THREE.Vector2(),
         _offset = new THREE.Vector3(),
@@ -30,7 +34,11 @@ THREE.MeshControls = function (camera, container) {
                 isLeftBtn: false,
                 isRightBtn: false,
                 isMiddleBtn: false
-            }
+            },
+            click: false,
+            moving: false,
+            generatedPlane: false
+
         };
 
     this._raySet = function () {
@@ -41,14 +49,25 @@ THREE.MeshControls = function (camera, container) {
 
         }
         else {
-
             var vector = new THREE.Vector3(_mouse.x, _mouse.y, 1);
             vector.unproject(_this.camera);
             _raycaster.set(_this.camera.position, vector.sub(_this.camera.position).normalize());
-
         }
 
     };
+
+    function generatePlane(){
+        var floorGeometry = new THREE.PlaneGeometry( 50, 50, 30,30 ),
+            floorMaterial = new THREE.MeshBasicMaterial( { color : 0xffffff, side: THREE.DoubleSide } ),
+            plane = new THREE.Mesh( floorGeometry, floorMaterial );
+            floorMaterial.transparent = true;
+            floorMaterial.opacity = 0;
+            plane.name = "_plane";
+            plane.rotateX(Math.PI/2);
+            plane.position.copy(camera.position);
+            plane.position.y = -1;
+            return plane;
+    }
 
     function toThreeCords(clientX, clientY){
         var rect = _this.container.getBoundingClientRect();
@@ -99,27 +118,40 @@ THREE.MeshControls = function (camera, container) {
 
     function onDocumentMouseMove(event){
         event.preventDefault();
+        flags.moving = true;
         toThreeCords(event.clientX, event.clientY);
+        _this._raySet();
 
-        console.log(_selected);
+            if(_selected && _selected.dragable === true && flags.btn.isLeftBtn === true){
 
+                _this.dispatchEvent( { type: 'drag', object: _selected } );
+
+            }
     }
 
     function onDocumentMouseDown(event){
+        event.preventDefault();
         setMouseBtn(event);
         _this._raySet();
+        flags.click = true;
         var intersects = _raycaster.intersectObjects(_this.objects, true);
 
         if(intersects.length > 0){
             _selected = intersects[0].object;
             _this.dispatchEvent( { type: 'click', object: intersects, btn: flags.btn});
-        }
 
+            if(_selected && _selected.dragable === true && flags.btn.isLeftBtn === true){
+                if(flags.generatedPlane === false && _this.map === undefined){
+                   scene.add(_3DPlane);
+                }
+                _this.dispatchEvent( { type: 'dragstart', object: _selected, btn: flags.btn});
+            }
+        }
     }
 
     function onDocumentMouseCancel(event){
         event.preventDefault();
-
+        flags.click = false;
         setMouseBtn(event);
         _this._raySet();
         var mouseUpSelected = _raycaster.intersectObjects(_this.objects, true);
@@ -128,18 +160,23 @@ THREE.MeshControls = function (camera, container) {
             _this.dispatchEvent( { type: 'mouseup', object: mouseUpSelected, btn: flags.btn});
         }
 
-        if(_selected && _selected.dragable === true){
+        if(_selected && _selected.dragable === true && flags.btn[_selected.dragableOn] === true){
             _this.dispatchEvent( { type: 'dragend', object: _selected});
+            _selected = null;
         }
 
     }
 
     // #API
     this.attach = function (object, options){
-        if(options === undefined || options.dragable === undefined){
+        if(options === undefined || options === undefined && options.dragable === undefined ){
            options = {};
            options.dragable = false;
-           object.dragable = false;
+           // switch back to false
+           object.dragable = true;
+
+        }else if(options.draggableBtnOn === undefined){
+            object.dragableOn = "isLeftBtn";
         }
         if (object instanceof THREE.Mesh) {
             this.objects.push(object);
