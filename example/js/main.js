@@ -65,6 +65,11 @@
             // selectedObject.object.position.y +=0.7;
            console.log(event)
         });
+        meshControls.addEventListener("mouseup",function(event){
+            var selectedObject = event.object[0];
+            // selectedObject.object.position.y +=0.7;
+            console.log("mouse up")
+        });
 
         meshControls.addEventListener("dragend",function(event){
             console.log("dragEnd", event)
@@ -75,7 +80,9 @@
         });
 
         meshControls.addEventListener("drag",function(event){
-            console.log("drag")
+            console.log("drag", event);
+            event.object.position.y = 0.33;
+
         });
 
 

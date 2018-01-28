@@ -127,14 +127,11 @@ THREE.MeshControls = function (camera,scene,container) {
             // checks to see if something is selected and draggable and if the right btn is clicked
             if(_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true){
                 _displacedMap = _raycaster.intersectObject(_3DPlane);
-                console.log(_displacedMap);
+                console.log("displacedmap",_displacedMap);
                 try{
                     var pos = new THREE.Vector3().copy(_displacedMap[0].point.sub(_offset));
                     pos.x *= _scale.x; pos.y *= _scale.y; pos.z *= _scale.z;
-                    var originalY = _selected.position.y;
-                    // _selected.position.set(pos.x, originalY, pos.z)
                     _selected.position.copy(pos);
-
                 }catch (err){
                     console.log(err);
                 }
@@ -174,19 +171,18 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseCancel(event){
         event.preventDefault();
-        console.log("MOUSE UP");
-
-        setMouseBtn(event);
         flags.click = false;
+        setMouseBtn(event);
         _this._raySet();
-        _displacedMap = null;
-        _selected = null;
 
         var mouseUpSelected = _raycaster.intersectObjects(_this.objects, true);
 
         if(mouseUpSelected.length > 0){
             _this.dispatchEvent( { type: 'mouseup', object: mouseUpSelected, btn: flags.btn});
-        }else if(_selected === null && flags.btn[_selected.draggableOn] === true){
+        }
+        if(flags.btn[_selected.draggableOn] === true){
+
+            _selected = null;
             _this.dispatchEvent( { type: 'dragend', object: _selected});
         }
 
