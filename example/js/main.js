@@ -67,7 +67,7 @@
         });
 
         meshControls.addEventListener("dragend",function(event){
-            console.log("dragEnd",event)
+            console.log("dragEnd", event)
         });
 
         meshControls.addEventListener("dragstart",function(event){
