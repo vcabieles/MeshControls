@@ -1,6 +1,6 @@
 /** Events that make it easier to manipulate ThreeJS meshes as well as speed up development.
  * @author Victor Cabieles / victorcabieles@gmail.com / github.com/vcabieles
- * V:0.0.3 1/27/2018
+ * V:0.0.5 1/27/2018
  * .attach: options = draggable true by default, draggableBtnOn: left mouse button by default;
  * _this.map plane is undefined then one is created.
  */
