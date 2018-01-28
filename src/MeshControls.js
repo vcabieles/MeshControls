@@ -5,6 +5,10 @@
  * _this.map plane is undefined then one is created.
  */
 
+/**
+ * TODO: add option for listening to keys for the whole document
+ * TODO:
+ */
 THREE.MeshControls = function (camera,scene,container) {
 
     if(scene === undefined || scene.nodeName){
@@ -26,7 +30,9 @@ THREE.MeshControls = function (camera,scene,container) {
         _intersection = new THREE.Vector3(),
         _direction = new THREE.Vector3(),
         _scale = new THREE.Vector3(1, 1, 1),
-        _displacedMap = null;
+        _displacedMap = null,
+        _lastKnownTarget = null,
+        _previousPosition = {};
 
     var _selected = null, _hovered = null;
 
@@ -40,8 +46,8 @@ THREE.MeshControls = function (camera,scene,container) {
             },
             click: false,
             moving: false,
-            generatedPlane: false
-
+            generatedPlane: false,
+            setLastPosition: false
         };
 
     this._raySet = function () {
@@ -106,6 +112,9 @@ THREE.MeshControls = function (camera,scene,container) {
         // container.addEventListener( 'touchmove', onDocumentTouchMove, false );
         // container.addEventListener( 'touchstart', onDocumentTouchStart, false );
         // container.addEventListener( 'touchend', onDocumentTouchEnd, false );
+        document.addEventListener("keydown", onKeyDown, false);
+        document.addEventListener("keypress", onKeyPress, false);
+        document.addEventListener("keypress", onKeyUp, false);
     }
 
     function removeListeners(){
@@ -117,37 +126,56 @@ THREE.MeshControls = function (camera,scene,container) {
         // container.removeEventListener( 'touchmove', onDocumentTouchMove, false );
         // container.removeEventListener( 'touchstart', onDocumentTouchStart, false );
         // container.removeEventListener( 'touchend', onDocumentTouchEnd, false );
+        document.removeEventListener("keydown", onKeyDown, false);
+        document.removeEventListener("keypress", onKeyPress, false);
+        document.removeEventListener("keypress", onKeyUp, false);
     }
 
     function onDocumentMouseMove(event){
         event.preventDefault();
-        flags.moving = true;
+        // console.log(event);
+        _lastKnownTarget = event.target;
         toThreeCords(event.clientX, event.clientY);
         _this._raySet();
+
+        // if(_previousPosition.x === event.clientX && _previousPosition.y === event.clientY){
+        //     console.log("previous position");
+        // }else {
             // checks to see if something is selected and draggable and if the right btn is clicked
-        console.log(flags.btn[_selected.draggableOn]);
-            if(_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true){
+            if (_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true) {
                 _displacedMap = _raycaster.intersectObject(_3DPlane);
-                console.log("displacedmap",_displacedMap);
-                try{
-                    var pos = new THREE.Vector3().copy(_displacedMap[0].point.sub(_offset));
-                    pos.x *= _scale.x; pos.y *= _scale.y; pos.z *= _scale.z;
-                    _selected.position.copy(pos);
-                }catch (err){
-                    console.log(err);
+                if(flags.setLastPosition === false){
+                    flags.setLastPosition = true;
+                }else{
+                    try {
+                        var pos = new THREE.Vector3().copy(_displacedMap[0].point.sub(_offset));
+                        pos.x *= _scale.x; pos.y *= _scale.y; pos.z *= _scale.z;
+                        _selected.position.copy(pos);
+                        console.log(_displacedMap);
+                        // _selected.position.set(_displacedMap[0].point.x, _selected.position.y, _displacedMap[0].point.z);
+
+
+                    } catch (err) {
+                        throw err
+                    }
+                    _this.dispatchEvent({type: 'drag', object: _selected});
                 }
 
-                _this.dispatchEvent( { type: 'drag', object: _selected } );
+
             }
+        // }
+
+        _previousPosition.x = event.clientX;
+        _previousPosition.y = event.clientY;
+
     }
 
     function onDocumentMouseDown(event){
         event.preventDefault();
         setMouseBtn(event);
         _this._raySet();
-        flags.click = true;
-        var intersects = _raycaster.intersectObjects(_this.objects, true);
 
+        var intersects = _raycaster.intersectObjects(_this.objects, true);
         if(intersects.length > 0){
 
             if(flags.btn[intersects[0].object.draggableOn]===true){
@@ -156,28 +184,35 @@ THREE.MeshControls = function (camera,scene,container) {
             _this.dispatchEvent( { type: 'click', object: intersects[0], btn: flags.btn, intersects: intersects});
 
             if(_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true){
+                var mapIntersect = _raycaster.intersectObject(_3DPlane);
                 if(flags.generatedPlane === false && _this.map === undefined){
                    scene.add(_3DPlane);
+                   flags.generatedPlane = true;
+                   console.log("Plane generated")
+                }else{
+                    _this.map = _3DPlane;
                 }
                 try {
-                    if (_this.offsetUse) {
-                        var pos = new THREE.Vector3().copy(_selected.position);
-                        pos.x = pos.x / _scale.x; pos.y = pos.y / _scale.y; pos.z = pos.z / _scale.z;
-                        _offset.subVectors(_selected[0].point, pos);
+                    // if (_offset) {
+                    //     var pos = new THREE.Vector3().copy(_selected.position);
+                    //     pos.x = pos.x / _scale.x; pos.y = pos.y / _scale.y; pos.z = pos.z / _scale.z;
+                    //     _offset.subVectors(mapIntersect[0].point, pos);
 
-                    }
+                    // }
                 }
-                catch (err) { }
-                _this.dispatchEvent( { type: 'dragstart', object: _selected, btn: flags.btn});
+                catch (err) { throw err }
+                _this.dispatchEvent( { type: 'dragstart', object: _selected, btn: flags.btn, intersects: intersects});
             }
         }
     }
 
     function onDocumentMouseCancel(event){
         event.preventDefault();
+        flags.setLastPosition = false;
         flags.click = false;
         setMouseBtn(event);
         _this._raySet();
+        container.blur();
 
         var mouseUpSelected = _raycaster.intersectObjects(_this.objects, true);
 
@@ -186,10 +221,28 @@ THREE.MeshControls = function (camera,scene,container) {
         }
         if(_selected && flags.btn[_selected.draggableOn] === true){
 
+            _this.dispatchEvent( { type: 'dragend', object: _selected, intersects: mouseUpSelected});
             _selected = null;
-            _this.dispatchEvent( { type: 'dragend', object: _selected});
         }
 
+    }
+
+    function onKeyDown(event){
+        if(_lastKnownTarget === arenaDom.element){
+            _this.dispatchEvent( { type: 'keydown', event: event});
+        }
+    }
+
+    function onKeyPress(event){
+        if(_lastKnownTarget === arenaDom.element){
+            _this.dispatchEvent( { type: 'keypress', event: event});
+        }
+    }
+
+    function onKeyUp(event){
+        if(_lastKnownTarget === arenaDom.element){
+            _this.dispatchEvent( { type: 'keyup', event: event});
+        }
     }
 
     // #API
@@ -232,6 +285,10 @@ THREE.MeshControls = function (camera,scene,container) {
 
     this.removeListenrs = function(){
         removeListeners()
+    };
+
+    this.setMap = function(map){
+      this.map =  map;
     };
 
     addListeners();
