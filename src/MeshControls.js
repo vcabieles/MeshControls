@@ -60,7 +60,7 @@ THREE.MeshControls = function (camera,scene,container) {
     };
 
     function generatePlane(){
-        var floorGeometry = new THREE.PlaneGeometry( 100, 100, 10, 10 ),
+        var floorGeometry = new THREE.PlaneGeometry( 2000, 2000, 10, 10 ),
             floorMaterial = new THREE.MeshBasicMaterial( { color : 0xffffff, side: THREE.DoubleSide } ),
             plane = new THREE.Mesh( floorGeometry, floorMaterial );
             floorMaterial.transparent = true;
@@ -102,7 +102,7 @@ THREE.MeshControls = function (camera,scene,container) {
         container.addEventListener( 'mousemove', onDocumentMouseMove, false );
         container.addEventListener( 'mousedown', onDocumentMouseDown, false );
         container.addEventListener( 'mouseup', onDocumentMouseCancel, false );
-        // container.addEventListener( 'mouseleave', onDocumentMouseCancel, false );
+        container.addEventListener( 'mouseleave', onDocumentMouseCancel, false );
         // container.addEventListener( 'touchmove', onDocumentTouchMove, false );
         // container.addEventListener( 'touchstart', onDocumentTouchStart, false );
         // container.addEventListener( 'touchend', onDocumentTouchEnd, false );
@@ -113,7 +113,7 @@ THREE.MeshControls = function (camera,scene,container) {
         container.removeEventListener( 'mousemove', onDocumentMouseMove, false );
         container.removeEventListener( 'mousedown', onDocumentMouseDown, false );
         container.removeEventListener( 'mouseup', onDocumentMouseCancel, false );
-        // container.removeEventListener( 'mouseleave', onDocumentMouseCancel, false );
+        container.removeEventListener( 'mouseleave', onDocumentMouseCancel, false );
         // container.removeEventListener( 'touchmove', onDocumentTouchMove, false );
         // container.removeEventListener( 'touchstart', onDocumentTouchStart, false );
         // container.removeEventListener( 'touchend', onDocumentTouchEnd, false );
@@ -125,6 +125,7 @@ THREE.MeshControls = function (camera,scene,container) {
         toThreeCords(event.clientX, event.clientY);
         _this._raySet();
             // checks to see if something is selected and draggable and if the right btn is clicked
+        console.log(flags.btn[_selected.draggableOn]);
             if(_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true){
                 _displacedMap = _raycaster.intersectObject(_3DPlane);
                 console.log("displacedmap",_displacedMap);
@@ -148,8 +149,11 @@ THREE.MeshControls = function (camera,scene,container) {
         var intersects = _raycaster.intersectObjects(_this.objects, true);
 
         if(intersects.length > 0){
-            _selected = intersects[0].object;
-            _this.dispatchEvent( { type: 'click', object: intersects, btn: flags.btn});
+
+            if(flags.btn[intersects[0].object.draggableOn]===true){
+                _selected = intersects[0].object;
+            }
+            _this.dispatchEvent( { type: 'click', object: intersects[0], btn: flags.btn, intersects: intersects});
 
             if(_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true){
                 if(flags.generatedPlane === false && _this.map === undefined){
@@ -180,7 +184,7 @@ THREE.MeshControls = function (camera,scene,container) {
         if(mouseUpSelected.length > 0){
             _this.dispatchEvent( { type: 'mouseup', object: mouseUpSelected, btn: flags.btn});
         }
-        if(flags.btn[_selected.draggableOn] === true){
+        if(_selected && flags.btn[_selected.draggableOn] === true){
 
             _selected = null;
             _this.dispatchEvent( { type: 'dragend', object: _selected});
