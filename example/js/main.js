@@ -38,16 +38,13 @@
 
     function init() {
 
-
         // #Camera & Scene
         camera = new THREE.PerspectiveCamera( 65, arenaDom.width() / arenaDom.height(), 0.01, 3000 );
         camera.name = "Camera";
-        camera.position.set(0,1,12);
+        camera.position.set(0,2,12);
         scene = new THREE.Scene();
         scene.name = "Scene";
         scene.add(camera);
-
-
 
         // #Floor
         var floorGeometry = new THREE.PlaneGeometry( 50, 50, 30,30 ),
@@ -61,12 +58,12 @@
         meshControls = new THREE.MeshControls(camera,scene,arenaDom.element);
 
         meshControls.addEventListener("click",function(event){
-            var selectedObject = event.object[0];
+            // var selectedObject = event.object[0];
             // selectedObject.object.position.y +=0.7;
            console.log("click", event)
         });
         meshControls.addEventListener("mouseup",function(event){
-            var selectedObject = event.object[0];
+            // var selectedObject = event.object[0];
             // selectedObject.object.position.y +=0.7;
             // console.log("mouse up")
         });
@@ -96,7 +93,7 @@
 
 
         // #Cubes
-            arenaDom.colors.forEach(function(color,index){
+            arenaDom.colors.forEach(function(color){
             var geometry = new THREE.BoxGeometry( 0.8, 0.8, 0.8 );
             var material = new THREE.MeshPhongMaterial( {color: color} );
             var cube = new THREE.Mesh( geometry, material );

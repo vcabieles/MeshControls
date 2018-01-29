@@ -144,9 +144,9 @@ THREE.MeshControls = function (camera,scene,container) {
             // checks to see if something is selected and draggable and if the right btn is clicked
             if (_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true) {
                 _displacedMap = _raycaster.intersectObject(_3DPlane);
-                if(flags.setLastPosition === false){
-                    flags.setLastPosition = true;
-                }else{
+                // if(flags.setLastPosition === false){
+                //     flags.setLastPosition = true;
+                // }else{
                     try {
                         var pos = new THREE.Vector3().copy(_displacedMap[0].point.sub(_offset));
                         pos.x *= _scale.x; pos.y *= _scale.y; pos.z *= _scale.z;
@@ -159,7 +159,7 @@ THREE.MeshControls = function (camera,scene,container) {
                         throw err
                     }
                     _this.dispatchEvent({type: 'drag', object: _selected});
-                }
+                // }
 
 
             }
@@ -176,32 +176,33 @@ THREE.MeshControls = function (camera,scene,container) {
 
         var intersects = _raycaster.intersectObjects(_this.objects, true);
         if(intersects.length > 0){
-
-            if(flags.btn[intersects[0].object.draggableOn]===true){
-                _selected = intersects[0].object;
-            }
             _this.dispatchEvent( { type: 'click', object: intersects[0], btn: flags.btn, intersects: intersects});
 
-            if(_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true){
-                var mapIntersect = _raycaster.intersectObject(_3DPlane);
+            if(flags.btn[intersects[0].object.draggableOn]===true){
                 if(flags.generatedPlane === false && _this.map === undefined){
-                   scene.add(_3DPlane);
-                   _this.objects.push(_3DPlane);
-                   flags.generatedPlane = true;
-                   console.log("Plane generated")
+                    scene.add(_3DPlane);
+                    _this.objects.push(_3DPlane);
+                    flags.generatedPlane = true;
+                    console.log("Plane generated")
                 }else if(flags.generatedPlane === true){
 
                 }else{
                     _this.map.name = "_plane";
                     _3DPlane = _this.map;
                 }
-                try {
-                    // if (_offset) {
-                    //     var pos = new THREE.Vector3().copy(_selected.position);
-                    //     pos.x = pos.x / _scale.x; pos.y = pos.y / _scale.y; pos.z = pos.z / _scale.z;
-                    //     _offset.subVectors(mapIntersect[0].point, pos);
+                _selected = intersects[0].object;
+                // var mapIntersect = _raycaster.intersectObject(_3DPlane);
+                // var pos = new THREE.Vector3().copy(_selected.position);
+                // pos.x = pos.x / _scale.x; pos.y = pos.y / _scale.y; pos.z = pos.z / _scale.z;
+                // _offset.subVectors(mapIntersect[0].point, pos);
+            }
 
-                    // }
+            if(_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true){
+                // var mapIntersect = _raycaster.intersectObject(_3DPlane);
+                try {
+                    // var pos = new THREE.Vector3().copy(_selected.position);
+                    // pos.x = pos.x / _scale.x; pos.y = pos.y / _scale.y; pos.z = pos.z / _scale.z;
+                    // _offset.subVectors(mapIntersect[0].point, pos);
                 }
                 catch (err) { throw err }
                 _this.dispatchEvent( { type: 'dragstart', object: _selected, btn: flags.btn, intersects: intersects});
