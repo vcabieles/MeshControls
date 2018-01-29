@@ -7,7 +7,7 @@
 
 /**
  * TODO: add option for listening to keys for the whole document
- * TODO:
+ * TODO: _this.map is _3DPlane
  */
 THREE.MeshControls = function (camera,scene,container) {
 
@@ -167,7 +167,6 @@ THREE.MeshControls = function (camera,scene,container) {
 
         _previousPosition.x = event.clientX;
         _previousPosition.y = event.clientY;
-
     }
 
     function onDocumentMouseDown(event){
@@ -187,10 +186,14 @@ THREE.MeshControls = function (camera,scene,container) {
                 var mapIntersect = _raycaster.intersectObject(_3DPlane);
                 if(flags.generatedPlane === false && _this.map === undefined){
                    scene.add(_3DPlane);
+                   _this.objects.push(_3DPlane);
                    flags.generatedPlane = true;
                    console.log("Plane generated")
+                }else if(flags.generatedPlane === true){
+
                 }else{
-                    _this.map = _3DPlane;
+                    _this.map.name = "_plane";
+                    _3DPlane = _this.map;
                 }
                 try {
                     // if (_offset) {
