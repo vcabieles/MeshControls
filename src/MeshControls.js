@@ -138,32 +138,17 @@ THREE.MeshControls = function (camera,scene,container) {
         toThreeCords(event.clientX, event.clientY);
         _this._raySet();
 
-        // if(_previousPosition.x === event.clientX && _previousPosition.y === event.clientY){
-        //     console.log("previous position");
-        // }else {
             // checks to see if something is selected and draggable and if the right btn is clicked
             if (_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true) {
                 _displacedMap = _raycaster.intersectObject(_3DPlane);
-                // if(flags.setLastPosition === false){
-                //     flags.setLastPosition = true;
-                // }else{
-                    try {
-                        var pos = new THREE.Vector3().copy(_displacedMap[0].point.sub(_offset));
-                        pos.x *= _scale.x; pos.y *= _scale.y; pos.z *= _scale.z;
-                        _selected.position.copy(pos);
-                        console.log(_displacedMap);
-                        // _selected.position.set(_displacedMap[0].point.x, _selected.position.y, _displacedMap[0].point.z);
 
+                var pos = new THREE.Vector3().copy(_displacedMap[0].point.sub(_offset));
+                pos.x *= _scale.x; pos.y *= _scale.y; pos.z *= _scale.z;
+                _selected.position.copy(pos);
 
-                    } catch (err) {
-                        throw err
-                    }
-                    _this.dispatchEvent({type: 'drag', object: _selected});
-                // }
-
+                _this.dispatchEvent({type: 'drag', object: _selected});
 
             }
-        // }
 
         _previousPosition.x = event.clientX;
         _previousPosition.y = event.clientY;
@@ -191,20 +176,10 @@ THREE.MeshControls = function (camera,scene,container) {
                     _3DPlane = _this.map;
                 }
                 _selected = intersects[0].object;
-                // var mapIntersect = _raycaster.intersectObject(_3DPlane);
-                // var pos = new THREE.Vector3().copy(_selected.position);
-                // pos.x = pos.x / _scale.x; pos.y = pos.y / _scale.y; pos.z = pos.z / _scale.z;
-                // _offset.subVectors(mapIntersect[0].point, pos);
             }
 
             if(_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true){
-                // var mapIntersect = _raycaster.intersectObject(_3DPlane);
-                try {
-                    // var pos = new THREE.Vector3().copy(_selected.position);
-                    // pos.x = pos.x / _scale.x; pos.y = pos.y / _scale.y; pos.z = pos.z / _scale.z;
-                    // _offset.subVectors(mapIntersect[0].point, pos);
-                }
-                catch (err) { throw err }
+
                 _this.dispatchEvent( { type: 'dragstart', object: _selected, btn: flags.btn, intersects: intersects});
             }
         }
@@ -214,6 +189,7 @@ THREE.MeshControls = function (camera,scene,container) {
         event.preventDefault();
         flags.setLastPosition = false;
         flags.click = false;
+        _lastKnownTarget = null;
         setMouseBtn(event);
         _this._raySet();
         container.blur();
@@ -287,7 +263,7 @@ THREE.MeshControls = function (camera,scene,container) {
         removeListeners()
     };
 
-    this.removeListenrs = function(){
+    this.removeListeners = function(){
         removeListeners()
     };
 

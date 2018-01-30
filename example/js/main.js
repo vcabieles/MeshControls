@@ -79,8 +79,13 @@
         });
 
         meshControls.addEventListener("drag",function(event){
-            console.log("drag", event);
+            // console.log("drag", event);
             event.object.position.y = 0.40;
+
+        });
+
+        meshControls.addEventListener("keydown",function(event){
+            console.log("KeyDown", event);
 
         });
 
