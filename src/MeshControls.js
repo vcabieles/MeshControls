@@ -133,7 +133,6 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseMove(event){
         event.preventDefault();
-        // console.log(event);
         _lastKnownTarget = event.target;
         toThreeCords(event.clientX, event.clientY);
         _this._raySet();
@@ -168,7 +167,6 @@ THREE.MeshControls = function (camera,scene,container) {
                     scene.add(_3DPlane);
                     _this.objects.push(_3DPlane);
                     flags.generatedPlane = true;
-                    console.log("Plane generated")
                 }else if(flags.generatedPlane === true){
 
                 }else{
