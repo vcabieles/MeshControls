@@ -22,7 +22,8 @@ THREE.MeshControls = function (camera,scene,container) {
 
     }
 
-    var _plane = new THREE.Plane(),
+    var _this = this,
+        _plane = new THREE.Plane(),
         _3DPlane = generatePlane(),
         _raycaster = new THREE.Raycaster(),
         _mouse = new THREE.Vector2(),
@@ -32,12 +33,9 @@ THREE.MeshControls = function (camera,scene,container) {
         _scale = new THREE.Vector3(1, 1, 1),
         _displacedMap = null,
         _lastKnownTarget = null,
-        _previousPosition = {};
-
-    var _selected = null, _hovered = null;
-
-
-    var _this = this,
+        _previousPosition = {},
+        _selected = null,
+        _hovered = null,
         flags = {
             btn: {
                 isLeftBtn: false,
@@ -78,10 +76,14 @@ THREE.MeshControls = function (camera,scene,container) {
             return plane;
     }
 
-    function toThreeCords(clientX, clientY){
-        var rect = _this.container.getBoundingClientRect();
+    function toThreeCords(clientX, clientY, domElement){
+        var rect = domElement === undefined ? _this.container.getBoundingClientRect() : domElement.getBoundingClientRect();
             _mouse.x = ( ( clientX - rect.left ) / rect.width ) * 2 - 1;
             _mouse.y = -( ( clientY - rect.top ) / rect.height ) * 2 + 1;
+         return {
+             x: _mouse.x,
+             y: _mouse.y
+         }
     }
 
     function setMouseBtn(event){
