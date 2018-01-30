@@ -2,12 +2,13 @@
 Events that make it easier to manipulate ThreeJS meshes as well as speed up development.
 
 ### Instantiate
+##### index.html
 ```
-#index.html
 <script src="/three.min.js"></script>
 <script src="/src/MeshControls.js"></script
-
-yourScript.js
+```
+##### yourScript.js
+```
 var meshControls = new THREE.MeshControls(camera,scene,domElement);
 options = {
     draggable: Boolean,
@@ -22,7 +23,7 @@ meshControls.addEventListener("<TYPE>",function(event){
 
 });
 ```
-#### Event Types
+##### Event Types
 Types are strings
 *  click
 *  mouseup
