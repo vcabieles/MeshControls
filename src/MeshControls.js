@@ -270,7 +270,6 @@ THREE.MeshControls = function (camera,scene,container) {
     };
 
     addListeners();
-
 };
 
 THREE.MeshControls.prototype = Object.create( THREE.EventDispatcher.prototype );
