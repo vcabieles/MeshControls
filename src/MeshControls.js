@@ -271,6 +271,7 @@ THREE.MeshControls = function (camera,scene,container) {
       this.map =  map;
     };
 
+    this.toThreeCords = toThreeCords;
     addListeners();
 
 };

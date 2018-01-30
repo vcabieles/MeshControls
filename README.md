@@ -1,13 +1,15 @@
+### _In Development_
 # MeshControls.JS
 Events that make it easier to manipulate ThreeJS meshes as well as speed up development.
 
 ### Instantiate
+##### index.html
 ```
-#index.html
 <script src="/three.min.js"></script>
 <script src="/src/MeshControls.js"></script
-
-yourScript.js
+```
+##### yourScript.js
+```
 var meshControls = new THREE.MeshControls(camera,scene,domElement);
 options = {
     draggable: Boolean,
@@ -22,7 +24,7 @@ meshControls.addEventListener("<TYPE>",function(event){
 
 });
 ```
-#### Event Types
+##### Event Types
 Types are strings
 *  click
 *  mouseup
@@ -50,4 +52,7 @@ Removes all eventlisteners from document.
 
 MeshControls.setMap(_Plane)
 Sets the plane from which drag and drop cordinates can be intersected.
+
+MeshControls.toThreeCords(clientX, clientY, domElement)
+Returns x and y according to threejs vectors. 
 ```
