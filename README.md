@@ -27,14 +27,16 @@ meshControls.addEventListener("<TYPE>",function(event){
 ##### Event Types
 Types are strings
 *  click
+*  mousemove
+*  mousedown
 *  mouseup
+*  mouseleave
 *  dragstart
 *  drag
 *  dragend
 *  keydown
 *  keypress
 *  keyup
-*  Item 3
 
 ### API Core
 ```
@@ -52,4 +54,7 @@ Removes all eventlisteners from document.
 
 MeshControls.setMap(_Plane)
 Sets the plane from which drag and drop cordinates can be intersected.
+
+MeshControls.toThreeCords(clientX, clientY, domElement)
+Returns x and y according to threejs vectors. 
 ```

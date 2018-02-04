@@ -12,17 +12,17 @@
 THREE.MeshControls = function (camera,scene,container) {
 
     if(scene === undefined || scene.nodeName){
-        throw "THREE.MeshControls Scene Parameter Not set"
+        throw "THREE.MeshControls Scene Parameter Not Set Properly"
     }else if(container === undefined || container.nodeName === undefined){
-        throw "THREE.MeshControls Element Parameter Not set"
+        throw "THREE.MeshControls Element Parameter Not Set Properly"
     }else{
         this.container = container;
         this.camera = camera;
         this.objects = [];
-
     }
 
-    var _plane = new THREE.Plane(),
+    var _this = this,
+        _plane = new THREE.Plane(),
         _3DPlane = generatePlane(),
         _raycaster = new THREE.Raycaster(),
         _mouse = new THREE.Vector2(),
@@ -32,12 +32,9 @@ THREE.MeshControls = function (camera,scene,container) {
         _scale = new THREE.Vector3(1, 1, 1),
         _displacedMap = null,
         _lastKnownTarget = null,
-        _previousPosition = {};
-
-    var _selected = null, _hovered = null;
-
-
-    var _this = this,
+        _previousPosition = {},
+        _selected = null,
+        _hovered = null,
         flags = {
             btn: {
                 isLeftBtn: false,
@@ -78,10 +75,14 @@ THREE.MeshControls = function (camera,scene,container) {
             return plane;
     }
 
-    function toThreeCords(clientX, clientY){
-        var rect = _this.container.getBoundingClientRect();
+    function toThreeCords(clientX, clientY, domElement){
+        var rect = domElement === undefined ? _this.container.getBoundingClientRect() : domElement.getBoundingClientRect();
             _mouse.x = ( ( clientX - rect.left ) / rect.width ) * 2 - 1;
             _mouse.y = -( ( clientY - rect.top ) / rect.height ) * 2 + 1;
+         return {
+             x: _mouse.x,
+             y: _mouse.y
+         }
     }
 
     function setMouseBtn(event){
@@ -133,6 +134,8 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseMove(event){
         event.preventDefault();
+        _this.dispatchEvent({type: 'mousemove', event: event});
+
         _lastKnownTarget = event.target;
         toThreeCords(event.clientX, event.clientY);
         _this._raySet();
@@ -155,6 +158,8 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseDown(event){
         event.preventDefault();
+        _this.dispatchEvent({type: 'mousedown', event: event});
+
         setMouseBtn(event);
         _this._raySet();
 
@@ -185,6 +190,8 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseCancel(event){
         event.preventDefault();
+        _this.dispatchEvent({type: 'mouseleave', event: event});
+
         flags.setLastPosition = false;
         flags.click = false;
         _lastKnownTarget = null;
@@ -269,6 +276,7 @@ THREE.MeshControls = function (camera,scene,container) {
       this.map =  map;
     };
 
+    this.toThreeCords = toThreeCords;
     addListeners();
 };
 
