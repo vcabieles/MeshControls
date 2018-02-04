@@ -12,14 +12,13 @@
 THREE.MeshControls = function (camera,scene,container) {
 
     if(scene === undefined || scene.nodeName){
-        throw "THREE.MeshControls Scene Parameter Not set"
+        throw "THREE.MeshControls Scene Parameter Not Set Properly"
     }else if(container === undefined || container.nodeName === undefined){
-        throw "THREE.MeshControls Element Parameter Not set"
+        throw "THREE.MeshControls Element Parameter Not Set Properly"
     }else{
         this.container = container;
         this.camera = camera;
         this.objects = [];
-
     }
 
     var _this = this,
@@ -135,6 +134,8 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseMove(event){
         event.preventDefault();
+        _this.dispatchEvent({type: 'mousemove', event: event});
+
         _lastKnownTarget = event.target;
         toThreeCords(event.clientX, event.clientY);
         _this._raySet();
@@ -157,6 +158,8 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseDown(event){
         event.preventDefault();
+        _this.dispatchEvent({type: 'mousedown', event: event});
+
         setMouseBtn(event);
         _this._raySet();
 
@@ -187,6 +190,8 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseCancel(event){
         event.preventDefault();
+        _this.dispatchEvent({type: 'mouseleave', event: event});
+
         flags.setLastPosition = false;
         flags.click = false;
         _lastKnownTarget = null;

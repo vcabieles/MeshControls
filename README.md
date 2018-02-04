@@ -27,14 +27,16 @@ meshControls.addEventListener("<TYPE>",function(event){
 ##### Event Types
 Types are strings
 *  click
+*  mousemove
+*  mousedown
 *  mouseup
+*  mouseleave
 *  dragstart
 *  drag
 *  dragend
 *  keydown
 *  keypress
 *  keyup
-*  Item 3
 
 ### API Core
 ```
