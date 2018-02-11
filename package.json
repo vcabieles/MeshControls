@@ -1,14 +1,14 @@
 {
-  "name": "MeshControls",
+  "name": "meshcontrols",
   "version": "0.0.5",
   "description": "Events that make it easier to manipulate ThreeJS meshes as well as speed up development.",
-  "main": "ThreeEvents.js",
+  "main": "src/MeshControls.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vcabieles/ThreeEvents.git"
+    "url": "git+https://github.com/vcabieles/MeshControls.git"
   },
   "keywords": [
     "EventControls",
@@ -20,7 +20,7 @@
   "author": "Victor Cabieles",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vcabieles/ThreeEvents/issues"
+    "url": "https://github.com/vcabieles/MeshControls/issues"
   },
-  "homepage": "https://github.com/vcabieles/ThreeEvents#readme"
+  "homepage": "https://github.com/vcabieles/MeshControls#readme"
 }
