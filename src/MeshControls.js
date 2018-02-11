@@ -151,10 +151,11 @@ THREE.MeshControls = function (camera,scene,container) {
 
             }
 
+        _this.dispatchEvent({type: 'mousemove', event: event, btn: flags.btn});
+
         _previousPosition.x = event.clientX;
         _previousPosition.y = event.clientY;
 
-        _this.dispatchEvent({type: 'mousemove', event: event, btn: flags.btn});
     }
 
     function onDocumentMouseDown(event){
