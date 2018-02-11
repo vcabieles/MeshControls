@@ -134,7 +134,6 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseMove(event){
         event.preventDefault();
-        _this.dispatchEvent({type: 'mousemove', event: event});
 
         _lastKnownTarget = event.target;
         toThreeCords(event.clientX, event.clientY);
@@ -154,11 +153,12 @@ THREE.MeshControls = function (camera,scene,container) {
 
         _previousPosition.x = event.clientX;
         _previousPosition.y = event.clientY;
+
+        _this.dispatchEvent({type: 'mousemove', event: event, btn: flags.btn});
     }
 
     function onDocumentMouseDown(event){
         event.preventDefault();
-        _this.dispatchEvent({type: 'mousedown', event: event});
 
         setMouseBtn(event);
         _this._raySet();
@@ -167,6 +167,7 @@ THREE.MeshControls = function (camera,scene,container) {
         if(intersects.length > 0){
             _this.dispatchEvent( { type: 'click', object: intersects[0], btn: flags.btn, intersects: intersects});
 
+            //Objects needs to be set to draggableOn
             if(flags.btn[intersects[0].object.draggableOn]===true){
                 if(flags.generatedPlane === false && _this.map === undefined){
                     scene.add(_3DPlane);
@@ -186,11 +187,14 @@ THREE.MeshControls = function (camera,scene,container) {
                 _this.dispatchEvent( { type: 'dragstart', object: _selected, btn: flags.btn, intersects: intersects});
             }
         }
+
+        _this.dispatchEvent({type: 'mousedown', event: event, btn: flags.btn, intersects: intersects});
+
     }
 
     function onDocumentMouseCancel(event){
         event.preventDefault();
-        _this.dispatchEvent({type: 'mouseleave', event: event});
+
 
         flags.setLastPosition = false;
         flags.click = false;
@@ -210,6 +214,7 @@ THREE.MeshControls = function (camera,scene,container) {
             _selected = null;
         }
 
+        _this.dispatchEvent({type: 'mouseup', event: event, btn: flags.btn});
     }
 
     function onKeyDown(event){
