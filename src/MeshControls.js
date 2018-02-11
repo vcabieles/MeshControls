@@ -13,7 +13,7 @@ THREE.MeshControls = function (camera,scene,container) {
 
     if(scene === undefined || scene.nodeName){
         throw "THREE.MeshControls Scene Parameter Not Set Properly"
-    }else if(container === undefined || container.nodeName === undefined){
+    }else if(container === undefined || container.nodeName === undefined || container === undefined){
         throw "THREE.MeshControls Element Parameter Not Set Properly"
     }else{
         this.container = container;
