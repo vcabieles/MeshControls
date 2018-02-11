@@ -1,5 +1,5 @@
 {
-  "name": "threeevents",
+  "name": "MeshControls",
   "version": "0.0.5",
   "description": "Events that make it easier to manipulate ThreeJS meshes as well as speed up development.",
   "main": "ThreeEvents.js",
