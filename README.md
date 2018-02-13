@@ -6,7 +6,7 @@ Events that make it easier to manipulate ThreeJS meshes as well as speed up deve
 ##### index.html
 ```
 <script src="/three.min.js"></script>
-<script src="/src/MeshControls.js"></script
+<script src="meshcontrols/src/MeshControls.js"></script
 ```
 ##### yourScript.js
 ```
@@ -29,6 +29,8 @@ Types are strings
 *  click
 *  mousemove
 *  mousedown
+*  mouseover
+*  mouseleave
 *  mouseup
 *  mouseleave
 *  dragstart

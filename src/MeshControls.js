@@ -8,6 +8,7 @@
 /**
  * TODO: add option for listening to keys for the whole document
  * TODO: _this.map is _3DPlane
+ * TODO: add option _this.mouseOverOnce = true deafault false default to true if true then on dispatch mouse over event once.
  */
 THREE.MeshControls = function (camera,scene,container) {
 
@@ -44,7 +45,8 @@ THREE.MeshControls = function (camera,scene,container) {
             click: false,
             moving: false,
             generatedPlane: false,
-            setLastPosition: false
+            setLastPosition: false,
+            dragging: false
         };
 
     this._raySet = function () {
@@ -66,23 +68,23 @@ THREE.MeshControls = function (camera,scene,container) {
         var floorGeometry = new THREE.PlaneGeometry( 2000, 2000, 10, 10 ),
             floorMaterial = new THREE.MeshBasicMaterial( { color : 0xffffff, side: THREE.DoubleSide } ),
             plane = new THREE.Mesh( floorGeometry, floorMaterial );
-            floorMaterial.transparent = true;
-            floorMaterial.opacity = 0;
-            plane.name = "_plane";
-            plane.rotateX(Math.PI/2);
-            plane.position.copy(camera.position);
-            plane.position.y = 0;
-            return plane;
+        floorMaterial.transparent = true;
+        floorMaterial.opacity = 0;
+        plane.name = "_plane";
+        plane.rotateX(Math.PI/2);
+        plane.position.copy(camera.position);
+        plane.position.y = 0;
+        return plane;
     }
 
     function toThreeCords(clientX, clientY, domElement){
         var rect = domElement === undefined ? _this.container.getBoundingClientRect() : domElement.getBoundingClientRect();
-            _mouse.x = ( ( clientX - rect.left ) / rect.width ) * 2 - 1;
-            _mouse.y = -( ( clientY - rect.top ) / rect.height ) * 2 + 1;
-         return {
-             x: _mouse.x,
-             y: _mouse.y
-         }
+        _mouse.x = ( ( clientX - rect.left ) / rect.width ) * 2 - 1;
+        _mouse.y = -( ( clientY - rect.top ) / rect.height ) * 2 + 1;
+        return {
+            x: _mouse.x,
+            y: _mouse.y
+        }
     }
 
     function setMouseBtn(event){
@@ -138,20 +140,31 @@ THREE.MeshControls = function (camera,scene,container) {
         _lastKnownTarget = event.target;
         toThreeCords(event.clientX, event.clientY);
         _this._raySet();
+        var movingRay = _raycaster.intersectObjects(_this.objects, true);
 
-            // checks to see if something is selected and draggable and if the right btn is clicked
-            if (_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true) {
-                _displacedMap = _raycaster.intersectObject(_3DPlane);
+        // checks to see if something is selected and draggable and if the right btn is clicked
+        if (_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true) {
+            _displacedMap = _raycaster.intersectObject(_3DPlane);
 
-                var pos = new THREE.Vector3().copy(_displacedMap[0].point.sub(_offset));
-                pos.x *= _scale.x; pos.y *= _scale.y; pos.z *= _scale.z;
-                _selected.position.copy(pos);
+            var pos = new THREE.Vector3().copy(_displacedMap[0].point.sub(_offset));
+            pos.x *= _scale.x; pos.y *= _scale.y; pos.z *= _scale.z;
+            _selected.position.copy(pos);
+            flags.dragging = true;
 
-                _this.dispatchEvent({type: 'drag', object: _selected});
+            _this.dispatchEvent({type: 'drag', object: _selected});
+        }
 
+        if(movingRay.length > 0 && flags.dragging === false){
+            _hovered = movingRay[0];
+            _this.dispatchEvent({type: 'mouseover', selected: _hovered});
+        }else if(movingRay.length === 0 && flags.dragging === false){
+            if(_hovered !== null){
+                _this.dispatchEvent({type: 'mouseleave', selected: _hovered});
+                _hovered = null;
             }
+        }
 
-        _this.dispatchEvent({type: 'mousemove', event: event, btn: flags.btn});
+        _this.dispatchEvent({type: 'mousemove', event: event, btn: flags.btn, intersects: movingRay});
 
         _previousPosition.x = event.clientX;
         _previousPosition.y = event.clientY;
@@ -172,7 +185,7 @@ THREE.MeshControls = function (camera,scene,container) {
             if(flags.btn[intersects[0].object.draggableOn]===true){
                 if(flags.generatedPlane === false && _this.map === undefined){
                     scene.add(_3DPlane);
-                    _this.objects.push(_3DPlane);
+                    // _this.objects.push(_3DPlane);
                     flags.generatedPlane = true;
                 }else if(flags.generatedPlane === true){
 
@@ -210,7 +223,7 @@ THREE.MeshControls = function (camera,scene,container) {
             _this.dispatchEvent( { type: 'mouseup', object: mouseUpSelected, btn: flags.btn});
         }
         if(_selected && flags.btn[_selected.draggableOn] === true){
-
+            flags.dragging = false;
             _this.dispatchEvent( { type: 'dragend', object: _selected, intersects: mouseUpSelected});
             _selected = null;
         }
@@ -239,10 +252,10 @@ THREE.MeshControls = function (camera,scene,container) {
     // #API
     this.attach = function (object, options){
         if(options === undefined || options === undefined && options.draggable === undefined ){
-           options = {};
-           options.draggable = false;
-           // switch back to false
-           object.draggable = true;
+            options = {};
+            options.draggable = false;
+            // switch back to false
+            object.draggable = true;
 
         }
         if(options.draggableBtnOn === undefined){
@@ -279,7 +292,7 @@ THREE.MeshControls = function (camera,scene,container) {
     };
 
     this.setMap = function(map){
-      this.map =  map;
+        this.map =  map;
     };
 
     this.toThreeCords = toThreeCords;
