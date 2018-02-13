@@ -1,6 +1,6 @@
 {
   "name": "meshcontrols",
-  "version": "0.0.5",
+  "version": "0.x",
   "description": "Events that make it easier to manipulate ThreeJS meshes as well as speed up development.",
   "main": "src/MeshControls.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "Mouse Events",
     "Mesh Events"
   ],
-  "author": "Victor Cabieles",
+  "author": "Victor Cabieles <victorcabieles@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/vcabieles/MeshControls/issues"
