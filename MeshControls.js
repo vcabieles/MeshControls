@@ -5,11 +5,6 @@
  * _this.map plane is undefined then one is created.
  */
 
-/**
- * TODO: add option for listening to keys for the whole document
- * TODO: _this.map is _3DPlane
- * TODO: add option _this.mouseOverOnce = true deafault false default to true if true then on dispatch mouse over event once.
- */
 THREE.MeshControls = function (camera,scene,container) {
 
     if(scene === undefined || scene.nodeName){
@@ -112,9 +107,6 @@ THREE.MeshControls = function (camera,scene,container) {
         container.addEventListener( 'mousedown', onDocumentMouseDown, false );
         container.addEventListener( 'mouseup', onDocumentMouseCancel, false );
         container.addEventListener( 'mouseleave', onDocumentMouseCancel, false );
-        // container.addEventListener( 'touchmove', onDocumentTouchMove, false );
-        // container.addEventListener( 'touchstart', onDocumentTouchStart, false );
-        // container.addEventListener( 'touchend', onDocumentTouchEnd, false );
         document.addEventListener("keydown", onKeyDown, false);
         document.addEventListener("keypress", onKeyPress, false);
         document.addEventListener("keypress", onKeyUp, false);
@@ -126,9 +118,6 @@ THREE.MeshControls = function (camera,scene,container) {
         container.removeEventListener( 'mousedown', onDocumentMouseDown, false );
         container.removeEventListener( 'mouseup', onDocumentMouseCancel, false );
         container.removeEventListener( 'mouseleave', onDocumentMouseCancel, false );
-        // container.removeEventListener( 'touchmove', onDocumentTouchMove, false );
-        // container.removeEventListener( 'touchstart', onDocumentTouchStart, false );
-        // container.removeEventListener( 'touchend', onDocumentTouchEnd, false );
         document.removeEventListener("keydown", onKeyDown, false);
         document.removeEventListener("keypress", onKeyPress, false);
         document.removeEventListener("keypress", onKeyUp, false);
@@ -142,7 +131,6 @@ THREE.MeshControls = function (camera,scene,container) {
         _this._raySet();
         var movingRay = _raycaster.intersectObjects(_this.objects, true);
 
-        // checks to see if something is selected and draggable and if the right btn is clicked
         if (_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true) {
             _displacedMap = _raycaster.intersectObject(_3DPlane);
 
