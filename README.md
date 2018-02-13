@@ -2,7 +2,8 @@
 # MeshControls.JS
 Events that make it easier to manipulate ThreeJS meshes as well as speed up development.
 
-### [DEMO](meshcontrols.klever.systems) Open the console
+### Demo @ meshcontrols.klever.systems
+Open the console
 
 ### Instantiate
 ##### index.html
