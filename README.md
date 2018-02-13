@@ -6,7 +6,7 @@ Events that make it easier to manipulate ThreeJS meshes as well as speed up deve
 ##### index.html
 ```
 <script src="/three.min.js"></script>
-<script src="meshcontrols/src/MeshControls.js"></script
+<script src="meshcontrols/MeshControls.mini.js"></script
 ```
 ##### yourScript.js
 ```
