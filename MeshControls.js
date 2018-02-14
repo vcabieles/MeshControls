@@ -10,11 +10,12 @@ THREE.MeshControls = function (camera,scene,container) {
     if(scene === undefined || scene.nodeName){
         throw "THREE.MeshControls Scene Parameter Not Set Properly"
     }else if(container === undefined || container.nodeName === undefined || container === undefined){
-        throw "THREE.MeshControls Element Parameter Not Set Properly"
+        throw "THREE.MeshControls domElement Parameter Not Set Properly"
     }else{
         this.container = container;
         this.camera = camera;
         this.objects = [];
+        this.mouseOverOnce = false;
     }
 
     var _this = this,
@@ -41,7 +42,8 @@ THREE.MeshControls = function (camera,scene,container) {
             moving: false,
             generatedPlane: false,
             setLastPosition: false,
-            dragging: false
+            dragging: false,
+            hoverEventFired: false
         };
 
     this._raySet = function () {
@@ -131,6 +133,7 @@ THREE.MeshControls = function (camera,scene,container) {
         _this._raySet();
         var movingRay = _raycaster.intersectObjects(_this.objects, true);
 
+        // checks to see if something is selected and draggable and if the right btn is clicked
         if (_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true) {
             _displacedMap = _raycaster.intersectObject(_3DPlane);
 
@@ -144,11 +147,21 @@ THREE.MeshControls = function (camera,scene,container) {
 
         if(movingRay.length > 0 && flags.dragging === false){
             _hovered = movingRay[0];
-            _this.dispatchEvent({type: 'mouseover', selected: _hovered});
+            if(_this.mouseOverOnce === true){
+                if(flags.hoverEventFired === false){
+                    _this.dispatchEvent({type: 'mouseover', selected: _hovered});
+                    flags.hoverEventFired = true;
+                }
+            }else{
+                _this.dispatchEvent({type: 'mouseover', selected: _hovered});
+            }
+
+
         }else if(movingRay.length === 0 && flags.dragging === false){
             if(_hovered !== null){
                 _this.dispatchEvent({type: 'mouseleave', selected: _hovered});
                 _hovered = null;
+                flags.hoverEventFired = false;
             }
         }
 
@@ -242,12 +255,13 @@ THREE.MeshControls = function (camera,scene,container) {
         if(options === undefined || options === undefined && options.draggable === undefined ){
             options = {};
             options.draggable = false;
-            // switch back to false
-            object.draggable = true;
-
+        }else{
+            object.draggable = options.draggable;
         }
         if(options.draggableBtnOn === undefined){
             object.draggableOn = "isLeftBtn";
+        }else{
+            object.draggableOn = options.draggableOn;
         }
         if (object instanceof THREE.Mesh) {
             this.objects.push(object);

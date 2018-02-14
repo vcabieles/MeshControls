@@ -48,6 +48,10 @@ Types are strings
 
 ### API Core
 ```
+MeshControls.mouseOverOnce = true; 
+Default: to false if set to true, mouse event only fires once 
+per hover otherwise it fires as long as the mouse hovers over the object.
+
 MeshControls.attach() 
 Adds the object from which you will be able to get events for.
 
