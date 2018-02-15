@@ -16,7 +16,7 @@ Open the console
 var meshControls = new THREE.MeshControls(camera,scene,domElement);
 options = {
     draggable: Boolean,
-    draggableOn: Integer //Defaults to 0 Left. 1 = Middle; 2 = Right;
+    draggableOn: string of: "isLeftBtn", "isRightBtn", "isMiddleBtn";
 }
 
 meshControls.attach(<MESH or 3DObject>, options)
