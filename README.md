@@ -34,6 +34,8 @@ Types are strings
 *  mousedown
 *  mouseover
 *  mouseleave
+*  conatainermouseup
+*  conatainermouseleave
 *  mouseup
 *  dragstart
 *  drag
@@ -41,6 +43,13 @@ Types are strings
 *  keydown
 *  keypress
 *  keyup
+
+All Types are triggered for the specified attached objects except for:
+```
+conatainermouseup: triggers when mouseup on domElement
+conatainermouseleave: triggers when mouseleave on domElement
+mousedown: triggers when mousedown on domElement
+```
 
 ### API Core
 ```

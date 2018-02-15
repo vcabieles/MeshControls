@@ -5,6 +5,10 @@
  * _this.map plane is undefined then one is created.
  */
 
+/**
+ * TODO: Delete the key selected from drag, dragstart and dragend
+ * */
+
 THREE.MeshControls = function (camera,scene,container) {
 
     if(scene === undefined || scene.nodeName){
@@ -48,9 +52,10 @@ THREE.MeshControls = function (camera,scene,container) {
 
     this._raySet = function () {
         if (_this.camera instanceof THREE.OrthographicCamera) {
-            _this._vector.set(_mouse.x, _mouse.y, -1).unproject(_this.camera);
-            _direction.set(0, 0, -1).transformDirection(_this.camera.matrixWorld);
-            _raycaster.set(_this._vector, _this._direction);
+            // _this._vector.set(_mouse.x, _mouse.y, -1).unproject(_this.camera);
+            // _direction.set(0, 0, -1).transformDirection(_this.camera.matrixWorld);
+            // _raycaster.set(_this._vector, _this._direction);
+            throw "THREE.MeshControls is not yet set up for THREE.OrthographicCamera"
 
         }
         else {
@@ -107,8 +112,8 @@ THREE.MeshControls = function (camera,scene,container) {
     function addListeners(){
         container.addEventListener( 'mousemove', onDocumentMouseMove, false );
         container.addEventListener( 'mousedown', onDocumentMouseDown, false );
-        container.addEventListener( 'mouseup', onDocumentMouseCancel, false );
-        container.addEventListener( 'mouseleave', onDocumentMouseCancel, false );
+        container.addEventListener( 'mouseup', onDocumentMouseUp, false );
+        container.addEventListener( 'mouseleave', onDocumentMouseLeave, false );
         document.addEventListener("keydown", onKeyDown, false);
         document.addEventListener("keypress", onKeyPress, false);
         document.addEventListener("keypress", onKeyUp, false);
@@ -118,8 +123,8 @@ THREE.MeshControls = function (camera,scene,container) {
 
         container.removeEventListener( 'mousemove', onDocumentMouseMove, false );
         container.removeEventListener( 'mousedown', onDocumentMouseDown, false );
-        container.removeEventListener( 'mouseup', onDocumentMouseCancel, false );
-        container.removeEventListener( 'mouseleave', onDocumentMouseCancel, false );
+        container.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+        container.removeEventListener( 'mouseleave', onDocumentMouseLeave, false );
         document.removeEventListener("keydown", onKeyDown, false);
         document.removeEventListener("keypress", onKeyPress, false);
         document.removeEventListener("keypress", onKeyUp, false);
@@ -142,30 +147,30 @@ THREE.MeshControls = function (camera,scene,container) {
             _selected.position.copy(pos);
             flags.dragging = true;
 
-            _this.dispatchEvent({type: 'drag', object: _selected});
+            _this.dispatchEvent({type: 'drag', object: _selected, mouseEvent: event});
         }
 
         if(movingRay.length > 0 && flags.dragging === false){
             _hovered = movingRay[0];
             if(_this.mouseOverOnce === true){
                 if(flags.hoverEventFired === false){
-                    _this.dispatchEvent({type: 'mouseover', selected: _hovered});
+                    _this.dispatchEvent({type: 'mouseover', object: _hovered, selected: _hovered, mouseEvent: event});
                     flags.hoverEventFired = true;
                 }
             }else{
-                _this.dispatchEvent({type: 'mouseover', selected: _hovered});
+                _this.dispatchEvent({type: 'mouseover', object: _hovered, selected: _hovered, mouseEvent: event});
             }
 
 
         }else if(movingRay.length === 0 && flags.dragging === false){
             if(_hovered !== null){
-                _this.dispatchEvent({type: 'mouseleave', selected: _hovered});
+                _this.dispatchEvent({type: 'mouseleave', object: _hovered, selected: _hovered, mouseEvent: event});
                 _hovered = null;
                 flags.hoverEventFired = false;
             }
         }
 
-        _this.dispatchEvent({type: 'mousemove', event: event, btn: flags.btn, intersects: movingRay});
+        _this.dispatchEvent({type: 'mousemove', event: event, btn: flags.btn, intersects: movingRay, mouseEvent: event});
 
         _previousPosition.x = event.clientX;
         _previousPosition.y = event.clientY;
@@ -180,7 +185,7 @@ THREE.MeshControls = function (camera,scene,container) {
 
         var intersects = _raycaster.intersectObjects(_this.objects, true);
         if(intersects.length > 0){
-            _this.dispatchEvent( { type: 'click', object: intersects[0], btn: flags.btn, intersects: intersects});
+            _this.dispatchEvent( { type: 'click', object: intersects[0], btn: flags.btn, intersects: intersects, mouseEvent: event});
 
             //Objects needs to be set to draggableOn
             if(flags.btn[intersects[0].object.draggableOn]===true){
@@ -199,17 +204,38 @@ THREE.MeshControls = function (camera,scene,container) {
 
             if(_selected && _selected.draggable === true && flags.btn[_selected.draggableOn] === true){
 
-                _this.dispatchEvent( { type: 'dragstart', object: _selected, btn: flags.btn, intersects: intersects});
+                _this.dispatchEvent( { type: 'dragstart', object: _selected, btn: flags.btn, intersects: intersects, mouseEvent: event});
             }
         }
 
-        _this.dispatchEvent({type: 'mousedown', event: event, btn: flags.btn, intersects: intersects});
+        _this.dispatchEvent({type: 'mousedown', event: event, btn: flags.btn, intersects: intersects, mouseEvent: event});
+
+    }
+
+    function onDocumentMouseUp(event){
+        onDocumentMouseCancel(event);
+        var mouseUpSelected = _raycaster.intersectObjects(_this.objects, true);
+
+        if(mouseUpSelected.length > 0){
+            _this.dispatchEvent( { type: 'mouseup', object: mouseUpSelected, btn: flags.btn, mouseEvent: event});
+        }
+        if(_selected && flags.btn[_selected.draggableOn] === true){
+            flags.dragging = false;
+            _this.dispatchEvent( { type: 'dragend', object: _selected, intersects: mouseUpSelected, mouseEvent: event});
+            _selected = null;
+        }
+
+        _this.dispatchEvent({type: 'conatainermouseup', btn: flags.btn, mouseEvent: event});
+    }
+
+    function onDocumentMouseLeave(event){
+        onDocumentMouseCancel(event);
+        _this.dispatchEvent({type: 'conatainermouseleave', mouseEvent: event});
 
     }
 
     function onDocumentMouseCancel(event){
         event.preventDefault();
-
 
         flags.setLastPosition = false;
         flags.click = false;
@@ -218,35 +244,23 @@ THREE.MeshControls = function (camera,scene,container) {
         _this._raySet();
         container.blur();
 
-        var mouseUpSelected = _raycaster.intersectObjects(_this.objects, true);
-
-        if(mouseUpSelected.length > 0){
-            _this.dispatchEvent( { type: 'mouseup', object: mouseUpSelected, btn: flags.btn});
-        }
-        if(_selected && flags.btn[_selected.draggableOn] === true){
-            flags.dragging = false;
-            _this.dispatchEvent( { type: 'dragend', object: _selected, intersects: mouseUpSelected});
-            _selected = null;
-        }
-
-        _this.dispatchEvent({type: 'mouseup', event: event, btn: flags.btn});
     }
 
     function onKeyDown(event){
         if(_lastKnownTarget === arenaDom.element){
-            _this.dispatchEvent( { type: 'keydown', event: event});
+            _this.dispatchEvent( { type: 'keydown', mouseEvent: event});
         }
     }
 
     function onKeyPress(event){
         if(_lastKnownTarget === arenaDom.element){
-            _this.dispatchEvent( { type: 'keypress', event: event});
+            _this.dispatchEvent( { type: 'keypress', mouseEvent: event});
         }
     }
 
     function onKeyUp(event){
         if(_lastKnownTarget === arenaDom.element){
-            _this.dispatchEvent( { type: 'keyup', event: event});
+            _this.dispatchEvent( { type: 'keyup', mouseEvent: event});
         }
     }
 
