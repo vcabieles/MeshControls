@@ -247,19 +247,19 @@ THREE.MeshControls = function (camera,scene,container) {
     }
 
     function onKeyDown(event){
-        if(_lastKnownTarget === arenaDom.element){
+        if(_lastKnownTarget === container){
             _this.dispatchEvent( { type: 'keydown', mouseEvent: event});
         }
     }
 
     function onKeyPress(event){
-        if(_lastKnownTarget === arenaDom.element){
+        if(_lastKnownTarget === container){
             _this.dispatchEvent( { type: 'keypress', mouseEvent: event});
         }
     }
 
     function onKeyUp(event){
-        if(_lastKnownTarget === arenaDom.element){
+        if(_lastKnownTarget === container){
             _this.dispatchEvent( { type: 'keyup', mouseEvent: event});
         }
     }
