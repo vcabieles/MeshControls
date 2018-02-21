@@ -179,7 +179,6 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseDown(event){
         event.preventDefault();
-
         setMouseBtn(event);
         _this._raySet();
 
@@ -231,15 +230,13 @@ THREE.MeshControls = function (camera,scene,container) {
     function onDocumentMouseLeave(event){
         onDocumentMouseCancel(event);
         _this.dispatchEvent({type: 'conatainermouseleave', mouseEvent: event});
-
+        _lastKnownTarget = null;
     }
 
     function onDocumentMouseCancel(event){
         event.preventDefault();
-
         flags.setLastPosition = false;
         flags.click = false;
-        _lastKnownTarget = null;
         setMouseBtn(event);
         _this._raySet();
         container.blur();
