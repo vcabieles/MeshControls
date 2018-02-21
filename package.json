@@ -1,6 +1,6 @@
 {
   "name": "meshcontrols",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Events that make it easier to manipulate ThreeJS meshes as well as speed up development.",
   "main": "src/MeshControls.js",
   "scripts": {
