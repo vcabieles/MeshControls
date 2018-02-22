@@ -179,6 +179,7 @@ THREE.MeshControls = function (camera,scene,container) {
 
     function onDocumentMouseDown(event){
         event.preventDefault();
+        _lastKnownTarget = event.target;
         setMouseBtn(event);
         _this._raySet();
 
